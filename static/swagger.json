@@ -1,0 +1,100 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "WB Order Service",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/order/{order_uid}": {
+      "get": {
+        "summary": "Получить заказ по идентификатору",
+        "parameters":   [
+          {
+            "name": "order_uid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "UID заказа"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } }
+          },
+          "400": { "description": "Bad Request" },
+          "404": { "description": "Not Found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Order": {
+        "type": "object",
+        "properties": {
+          "order_uid": {"type": "string"},
+          "track_number": {"type": "string"},
+          "entry": {"type": "string"},
+          "locale": {"type": "string"},
+          "internal_signature": {"type": "string"},
+          "customer_id": {"type": "string"},
+          "delivery_service": {"type": "string"},
+          "shardkey": {"type": "string"},
+          "sm_id": {"type": "integer"},
+          "date_created": {"type": "string", "format": "date-time"},
+          "oof_shard": {"type": "string"},
+          "delivery": {"$ref": "#/components/schemas/Delivery"},
+          "payment": {"$ref": "#/components/schemas/Payment"},
+          "items": {"type": "array", "items": {"$ref": "#/components/schemas/Item"}}
+        }
+      },
+      "Delivery": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "phone": {"type": "string"},
+          "zip": {"type": "string"},
+          "city": {"type": "string"},
+          "address": {"type": "string"},
+          "region": {"type": "string"},
+          "email": {"type": "string"}
+        }
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "transaction": {"type": "string"},
+          "request_id": {"type": "string"},
+          "currency": {"type": "string"},
+          "provider": {"type": "string"},
+          "amount": {"type": "integer"},
+          "payment_dt": {"type": "integer"},
+          "bank": {"type": "string"},
+          "delivery_cost": {"type": "integer"},
+          "goods_total": {"type": "integer"},
+          "custom_fee": {"type": "integer"}
+        }
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "chrt_id": {"type": "integer"},
+          "track_number": {"type": "string"},
+          "price": {"type": "integer"},
+          "rid": {"type": "string"},
+          "name": {"type": "string"},
+          "sale": {"type": "integer"},
+          "size": {"type": "string"},
+          "total_price": {"type": "integer"},
+          "nm_id": {"type": "integer"},
+          "brand": {"type": "string"},
+          "status": {"type": "integer"}
+        }
+      }
+    }
+  }
+}
+
+

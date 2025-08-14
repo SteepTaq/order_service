@@ -1,0 +1,39 @@
+version: 2
+
+run:
+  timeout: 3m
+
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - ineffassign
+    - gosec
+
+linters-settings:
+  errcheck:
+    exclude-functions:
+      - '(database/sql).*\.Close'
+      - '(*database/sql.Tx).Rollback'
+      - '(*database/sql.Rows).Close'
+      - '(*encoding/json.Encoder).Encode'
+      - '(*github.com/segmentio/kafka-go.Writer).Close'
+  revive:
+    rules:
+      - name: exported
+        disabled: true
+      - name: var-naming
+        disabled: true
+      - name: package-comments
+        disabled: true
+      - name: blank-imports
+        disabled: true
+
+issues:
+  exclude-use-default: false
+  exclude-rules:
+    - path: scripts/producer\.go
+      linters:
+        - gosec
+      text: G404

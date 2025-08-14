@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск заказов</title>
+    <style>
+        body {
+            font-family: monospace;
+            margin: 20px;
+            background: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            font-family: monospace;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            padding: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            display: none;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Поиск заказов</h1>
+        
+        <div class="search-box">
+            <input type="text" id="orderId" placeholder="Введите номер заказа...">
+            <button onclick="searchOrder()">Найти</button>
+        </div>
+        
+        <div id="loading" class="loading">Поиск...</div>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function searchOrder() {
+            const orderId = document.getElementById('orderId').value.trim();
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            
+            if (!orderId) {
+                showResult('Введите номер заказа', true);
+                return;
+            }
+            
+            loadingDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            
+            fetch(`/order/${orderId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error('Заказ не найден');
+                        } else {
+                            throw new Error('Ошибка сервера');
+                        }
+                    }
+                    return response.json();
+                })
+                .then(order => {
+                    const jsonString = JSON.stringify(order, null, 2);
+                    resultDiv.textContent = jsonString;
+                    resultDiv.style.display = 'block';
+                    resultDiv.className = 'result';
+                })
+                .catch(error => {
+                    showResult(error.message, true);
+                })
+                .finally(() => {
+                    loadingDiv.style.display = 'none';
+                });
+        }
+        
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.style.display = 'block';
+            resultDiv.className = isError ? 'result error' : 'result';
+        }
+        
+        document.getElementById('orderId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchOrder();
+            }
+        });
+    </script>
+</body>
+</html>

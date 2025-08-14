@@ -1,5 +1,5 @@
 Видео:
-[Ссылка на видео]()
+[Ссылка на видео](https://drive.google.com/file/d/182X4hIK8aWvbDQnVxgtatSk0prEqi8k5/view?usp=sharing)
 
 Быстрый старт:
 make all
